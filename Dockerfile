@@ -5,7 +5,8 @@ MAINTAINER Kuari "kuari@justmylife.cc"
 RUN apt-get update && \
     apt-get install -y openssh-server vim && \
     mkdir /var/run/sshd && \
-    echo "root:admin" | chpasswd
+    echo "root:admin" | chpasswd && \
+    mkdir /work
 
 ADD ./.vimrc /root/.vimrc
 
