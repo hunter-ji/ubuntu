@@ -11,8 +11,7 @@ RUN echo "deb http://mirrors.163.com/ubuntu/ trusty main restricted universe mul
 RUN apt-get update && \
     apt-get install -y openssh-server vim && \
     mkdir /var/run/sshd && \
-    echo "root:admin" | chpasswd && \
-    rm /etc/vimrc
+    echo "root:admin" | chpasswd
 
 ADD ./vimrc /etc/vimrc
 
