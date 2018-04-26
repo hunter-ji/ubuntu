@@ -13,7 +13,7 @@ RUN apt-get update && \
     mkdir /var/run/sshd && \
     echo "root:admin" | chpasswd
 
-ADD ./vimrc /etc/vimrc
+ADD ./.vimrc /root/.vimrc
 
 RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
