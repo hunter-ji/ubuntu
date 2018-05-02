@@ -1,21 +1,22 @@
 FROM ubuntu:16.04
+MAINTAINER cxz
 
-MAINTAINER Kuari "kuari@justmylife.cc"
 
-RUN echo "deb http://mirrors.163.com/ubuntu/ trusty main restricted universe multiverse" > /etc/apt/sources.list && \
-    echo "deb http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse" >> /etc/apt/sources.list && \
-    echo "deb http://mirrors.163.com/ubuntu/ trusty-updates main restricted universe multiverse" >> /etc/apt/sources.list && \
-    echo "deb http://mirrors.163.com/ubuntu/ trusty-proposed main restricted universe multiverse" >> /etc/apt/sources.list && \
-    echo "deb http://mirrors.163.com/ubuntu/ trusty-backports main restricted universe multiverse" >> /etc/apt/sources.list
+RUN apt-get update && apt-get install -y openssh-server
 
-RUN apt-get update && \
-    apt-get install -y openssh-server && \
-    mkdir /var/run/sshd && \
-    echo "root:admin" | chpasswd
+RUN mkdir /var/run/sshd
+RUN echo 'root:123456' | chpasswd
 
-RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
+#Set history record
+ENV HISTTIMEFORMAT "%F %T  "
+
+#Fix sshd service:Read from socket failed: Connection reset by peer?
+RUN ssh-keygen -A
+
+#Open 22 port
 EXPOSE 22
 
-CMD    ["/usr/sbin/sshd", "-D"]
+#Auto running sshd service
+CMD ["/usr/sbin/sshd","-D"]
