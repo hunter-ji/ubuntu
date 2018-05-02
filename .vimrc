@@ -1,9 +1,9 @@
 au InsertLeave *.py write
 
-
 au FocusLost * silent! up
 
 syntax on
+set autowrite
 set nu
 set encoding=utf-8
 :set tabstop=8 expandtab shiftwidth=4 softtabstop=4
