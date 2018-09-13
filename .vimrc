@@ -1,9 +1,4 @@
-au InsertLeave *.py write
-
-au FocusLost * silent! up
-
 syntax on
-set autowrite
 set nu
 set encoding=utf-8
 :set tabstop=8 expandtab shiftwidth=4 softtabstop=4
@@ -51,15 +46,32 @@ function QuoteDelim(char)
  endif
 endf
 
-function HeaderPython()
-    call setline(1, "#!/usr/bin/python")
-    call append(1, "# -*- coding: utf-8 -*-")
-    normal G
-    normal o
-endf
-autocmd bufnewfile *.py call HeaderPython()
+" 替换esc为jk
+inoremap <esc> <esc>l
+inoremap jk <esc>l
 
+" 滚屏
+inoremap <c-h> <left>
+inoremap <c-l> <right>
+inoremap <c-j> <down>
+inoremap <c-k> <up>
+
+cnoremap <c-h> <left>
+cnoremap <c-l> <right>
+cnoremap <c-j> <down>
+
+" split navigations
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+
+" 系统剪切板
+set clipboard=unnamedplus
+
+" 显示空白格
+highlight WhitespaceEOL ctermbg=red guibg=red
+match WhitespaceEOL /\s\+$/
+
+" 去除尾末空白格
+map <silent> <F6> :%s= *$==<cr>
