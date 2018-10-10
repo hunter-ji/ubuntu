@@ -21,4 +21,4 @@ EXPOSE 22
 COPY run.sh /
 
 #Auto running sshd service
-CMD ["bash /run.sh"]
+CMD ["sh","/run.sh"]
