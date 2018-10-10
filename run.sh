@@ -1,2 +1,2 @@
 /usr/sbin/sshd
-mysqld
+mysqld --user=root
