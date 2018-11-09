@@ -1,24 +1,18 @@
-FROM mysql
+FROM python:latest
 
-RUN apt-get update && apt-get install -y openssh-server
+MAINTAINER Kuari "kuari@justmylife.cc"
 
-RUN echo 'root:admina' | chpasswd
+RUN apt-get update && \
+    apt-get install -y openssh-server vim && \
+    mkdir /var/run/sshd && \
+    echo "root:admin" | chpasswd && \
+    mkdir /work
 
-RUN mkdir /var/run/sshd
+ADD ./.vimrc /root/.vimrc
 
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 
-#Set history record
-ENV HISTTIMEFORMAT "%F %T  "
-
-#Fix sshd service:Read from socket failed: Connection reset by peer?
-RUN ssh-keygen -A
-
-#Open 22 port
 EXPOSE 22
 
-# Add run.sh
-COPY run.sh /
-
-#Auto running sshd service
-CMD ["sh","/run.sh"]
+CMD ["/usr/sbin/sshd", "-D"]
