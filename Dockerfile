@@ -1,12 +1,15 @@
-FROM ubuntu:latest
+FROM ubuntu:16.04
 
-MAINTAINER Kuari "kuari@justmylife.cc"
+RUN apt-get update && apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:admina' | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
-RUN apt-get update && \
-    apt-get install -y openssh-server vim emacs-nox && \
-    mkdir /var/run/sshd && \
-    echo "root:admin" | chpasswd && \
-    mkdir /work
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
 
 RUN apt-get update \
   && apt-get install -y python3-pip python3-dev \
@@ -14,15 +17,11 @@ RUN apt-get update \
   && ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip
 
+RUN apt-get install -y vim emacs-nox && \
+    mkdir /work
+
 ADD ./.vimrc /root/.vimrc
 ADD ./.emacs /root/.emacs
 
-RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
-
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 EXPOSE 22
-
 CMD ["/usr/sbin/sshd", "-D"]
